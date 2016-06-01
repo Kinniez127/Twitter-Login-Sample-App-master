@@ -23,6 +23,13 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"/>
 
+    <TextView
+        android:id="@+id/textViewUserId"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"/>
+
     <Button
         android:id="@+id/showTimeline"
         android:layout_width="match_parent"

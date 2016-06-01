@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -17,18 +18,12 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.models.User;
 
+import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
 
-    //This is your KEY and SECRET
-    //And it would be added automatically while the configuration
-    private static final String TWITTER_KEY = "aRDHmw60Czpxu5yNzXzsTzYFs";
-    private static final String TWITTER_SECRET = "ASZND7L7vRv2H2PTT5AicJg2oSUMbAs7i2fm0VSq0bcMfDvh6F";
 
-    //Tags to send the username and image url to next activity using intent
-    public static final String KEY_USERNAME = "username";
-    public static final String KEY_PROFILE_IMAGE_URL = "image_url";
 
     //Twitter Login Button
     TwitterLoginButton twitterLoginButton;
@@ -39,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //Initializing TwitterAuthConfig, these two line will also added automatically while configuration we did
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(Constant.TWITTER_KEY, Constant.TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig), new Crashlytics());
 
         setContentView(R.layout.activity_main);
 
@@ -52,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void success(Result<TwitterSession> result) {
                 //If login succeeds passing the Calling the login method and passing Result object
+                TwitterSession session = Twitter.getSessionManager()
+                        .getActiveSession();
+                TwitterAuthToken authToken = session.getAuthToken();
+                String token = authToken.token;
+                String secret = authToken.secret;
                 login(result);
             }
 
@@ -62,8 +62,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Twitter(authConfig))
+                .logger(new DefaultLogger(Log.DEBUG))
+                .debuggable(true)
+                .build();
 
+        Fabric.with(fabric);
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -94,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     public void success(Result<User> userResult) {
                         //If it succeeds creating a User object from userResult.data
                         User user = userResult.data;
-
+                        Constant.user = user;
                         //Getting the profile image url
                         String profileImage = user.profileImageUrl.replace("_normal", "");
 
@@ -102,12 +109,13 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
 
                         //Adding the values to intent
-                        intent.putExtra(KEY_USERNAME,username);
-                        intent.putExtra(KEY_PROFILE_IMAGE_URL, profileImage);
+                        intent.putExtra(Constant.KEY_USERNAME, username);
+                        intent.putExtra(Constant.KEY_PROFILE_IMAGE_URL, profileImage);
 
                         //Starting intent
                         startActivity(intent);
                     }
                 });
     }
+
 }

@@ -1,5 +1,8 @@
 package net.simplifiedcoding.twitterloginsample;
 
+import android.app.Activity;
+import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,8 +13,9 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.twitter.sdk.android.tweetui.Timeline;
+import com.twitter.sdk.android.tweetui.TwitterListTimeline;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity{
 
     //Image Loader object
     private ImageLoader imageLoader;
@@ -21,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //TextView object
     private TextView textViewUsername;
+    private TextView textViewUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,13 @@ public class ProfileActivity extends AppCompatActivity {
         Button ShowTimeline = (Button) findViewById(R.id.showTimeline);
 
         //Getting values from intent
-        String username = intent.getStringExtra(MainActivity.KEY_USERNAME);
-        String profileImageUrl = intent.getStringExtra(MainActivity.KEY_PROFILE_IMAGE_URL);
+        String username = intent.getStringExtra(Constant.KEY_USERNAME);
+        String profileImageUrl = intent.getStringExtra(Constant.KEY_PROFILE_IMAGE_URL);
 
         //Initializing views
         profileImage = (NetworkImageView) findViewById(R.id.profileImage);
         textViewUsername = (TextView) findViewById(R.id.textViewUsername);
+        textViewUserId = (TextView) findViewById(R.id.textViewUserId);
 
         //Loading image
         imageLoader = CustomVolleyRequest.getInstance(this).getImageLoader();
@@ -47,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Setting the username in textview
         textViewUsername.setText("@" + username);
+        textViewUserId.setText(Constant.user.id+"");
 
         ShowTimeline.setOnClickListener(new View.OnClickListener() {
             @Override

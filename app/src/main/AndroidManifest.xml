@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.simplifiedcoding.twitterloginsample">
+    package="net.simplifiedcoding.twitterloginsample"
+    android:hardwareAccelerated="false">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -22,8 +23,29 @@
             android:name="io.fabric.ApiKey"
             android:value="34ba943e35a67dfaf6eb04b1fc8c22aa3f4d760b" />
 
-        <activity android:name=".ProfileActivity"></activity>
-        <activity android:name=".TimelineActivity"></activity>
+        <activity android:name=".ProfileActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".TimelineActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".TweetListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
