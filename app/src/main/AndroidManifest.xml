@@ -25,7 +25,6 @@
 
         <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".TimelineActivity"></activity>
-        <activity android:name=".TweetListActivity"></activity>
     </application>
 
 </manifest>
