@@ -89,7 +89,7 @@ public class TimelineActivity extends ListActivity  {
                     }
                 });
             }
-        }, 1000, 5000);
+        }, 1000, 20000);
 
     }
 
