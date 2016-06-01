@@ -46,15 +46,13 @@ public class TimelineActivity extends ListActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timeline);
 
-
-
         TwitterAuthConfig authConfig = new TwitterAuthConfig(Constant.TWITTER_KEY, Constant.TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig), new Crashlytics());
 
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         final UserTimeline timeline = new UserTimeline.Builder()
-                .userId(Constant.user.id).
-                        build();
+                .userId(Constant.user.id)
+                .build();
         final TweetTimelineListAdapter adapter = new TweetTimelineListAdapter.Builder(this)
                 .setTimeline(timeline)
                 .build();
@@ -78,7 +76,7 @@ public class TimelineActivity extends ListActivity  {
             }
         });
 
-        Timer T=new Timer();
+        Timer T = new Timer();
         T.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

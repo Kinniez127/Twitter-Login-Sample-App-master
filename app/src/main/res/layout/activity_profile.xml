@@ -23,21 +23,44 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"/>
 
-    <TextView
-        android:id="@+id/textViewUserId"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"/>
-
     <Button
-        android:id="@+id/showTimeline"
+        android:id="@+id/showUserTimeline"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Show Timeline" />
+        android:text="Show User Timeline" />
 
-    <RelativeLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_layout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"></RelativeLayout>
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@id/android:list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="#e1e8ed"
+                android:dividerHeight="1dp"/>
+
+            <ScrollView
+                android:id="@id/android:empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Tweets"
+                    android:layout_gravity="center_horizontal|center_vertical"/>
+            </ScrollView>
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

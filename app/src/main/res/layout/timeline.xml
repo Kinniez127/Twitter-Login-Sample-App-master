@@ -30,10 +30,6 @@
                 android:layout_height="wrap_content"
                 android:text="No Tweets"
                 android:layout_gravity="center_horizontal|center_vertical"/>
-
         </ScrollView>
-
     </LinearLayout>
-
-
 </android.support.v4.widget.SwipeRefreshLayout>
