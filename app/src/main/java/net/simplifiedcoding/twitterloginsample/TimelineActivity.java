@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthException;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.models.User;
 import com.twitter.sdk.android.tweetui.CollectionTimeline;
 import com.twitter.sdk.android.tweetui.SearchTimeline;
 import com.twitter.sdk.android.tweetui.Timeline;
@@ -89,22 +91,43 @@ public class TimelineActivity extends ListActivity  {
             }
         }, 1000, 5000);
 
-
     }
 
     public void refreshNotification(){
+        setTweetCount();
 
-        int tweetCountRefresh = Constant.user.statusesCount;
+    }
 
-        if(tweetCountRefresh > tweetCount){
-            Context context = getApplicationContext();
-            CharSequence text = "New Tweets!!!!!";
-            int duration = Toast.LENGTH_SHORT;
+    public void setTweetCount(){
+        Twitter.getApiClient().getAccountService()
+                .verifyCredentials(true, false, new Callback<User>() {
+                    @Override
+                    public void failure(TwitterException e) {
+                        //If any error occurs handle it here
+                    }
 
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+                    @Override
+                    public void success(Result<User> userResult) {
+                        //If it succeeds creating a User object from userResult.data
+                        User user = userResult.data;
+                        int tweetCountRefresh = user.statusesCount;
 
-        }
+                        if(tweetCountRefresh > tweetCount){
+                            Context context = getApplicationContext();
+                            CharSequence text = "New Tweets!!!!!";
+                            int duration = Toast.LENGTH_SHORT;
+
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                            Constant.user = user;
+                            tweetCount = Constant.user.statusesCount;
+                        }
+                    }
+                });
+
+
     }
 
 }
+
