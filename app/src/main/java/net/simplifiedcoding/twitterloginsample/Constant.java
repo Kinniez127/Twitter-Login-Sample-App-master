@@ -1,6 +1,9 @@
 package net.simplifiedcoding.twitterloginsample;
 
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.models.User;
+import com.twitter.sdk.android.core.services.StatusesService;
 
 public class Constant {
     //This is your KEY and SECRET
@@ -12,5 +15,10 @@ public class Constant {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PROFILE_IMAGE_URL = "image_url";
 
+    public static final String REQUEST_URL = "http://api.twitter.com/oauth/request_token";
+    public static final String ACCESS_URL = "http://api.twitter.com/oauth/access_token";
+    public static final String AUTHORIZE_URL = "http://api.twitter.com/oauth/authorize";
+
     public static User user;
+
 }

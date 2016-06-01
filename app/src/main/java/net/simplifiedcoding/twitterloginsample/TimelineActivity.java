@@ -1,6 +1,7 @@
 package net.simplifiedcoding.twitterloginsample;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.Twitter;
@@ -28,22 +30,27 @@ import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 import com.twitter.sdk.android.tweetui.UserTimeline;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.fabric.sdk.android.Fabric;
 
 public class TimelineActivity extends ListActivity  {
 
+    int tweetCount = Constant.user.statusesCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.timeline);
 
+
+
         TwitterAuthConfig authConfig = new TwitterAuthConfig(Constant.TWITTER_KEY, Constant.TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig), new Crashlytics());
 
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-        UserTimeline timeline = new UserTimeline.Builder()
+        final UserTimeline timeline = new UserTimeline.Builder()
                 .userId(Constant.user.id).
                         build();
         final TweetTimelineListAdapter adapter = new TweetTimelineListAdapter.Builder(this)
@@ -69,8 +76,35 @@ public class TimelineActivity extends ListActivity  {
             }
         });
 
+        Timer T=new Timer();
+        T.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshNotification();
+                    }
+                });
+            }
+        }, 1000, 5000);
+
 
     }
 
+    public void refreshNotification(){
+
+        int tweetCountRefresh = Constant.user.statusesCount;
+
+        if(tweetCountRefresh > tweetCount){
+            Context context = getApplicationContext();
+            CharSequence text = "New Tweets!!!!!";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+        }
+    }
 
 }
