@@ -35,8 +35,6 @@ import java.util.TimerTask;
 
 public class ProfileActivity extends ListActivity{
 
-    int tweetCount = Constant.user.statusesCount;
-
     //Image Loader object
     private ImageLoader imageLoader;
 
@@ -48,6 +46,9 @@ public class ProfileActivity extends ListActivity{
     private TextView textViewUserId;
 
     private TweetViewAdapter adapter;
+
+    private int tweetCount = 0;
+    private int tweetCountRefresh = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class ProfileActivity extends ListActivity{
         //Setting the username in textview
         textViewUsername.setText("@" + username);
 
+        //Set on click button
         ShowTimeline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,36 +86,24 @@ public class ProfileActivity extends ListActivity{
 
         });
 
+        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         adapter = new TweetViewAdapter(this);
         setListAdapter(adapter);
-        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-       /* final TwitterListTimeline timeline = new TwitterListTimeline.Builder()
-                .id(Constant.user.id)
-                .build();
-        final TweetTimelineListAdapter adapter = new TweetTimelineListAdapter.Builder(this)
-                .setTimeline(timeline)
-                .build();
-        setListAdapter(adapter);
 
+        loadTweets();
+
+        //Set Swipe Layout when refresh
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeLayout.setRefreshing(true);
-                adapter.refresh(new Callback<TimelineResult<Tweet>>() {
-                    @Override
-                    public void success(Result<TimelineResult<Tweet>> result) {
-                        swipeLayout.setRefreshing(false);
-                    }
+                loadTweets();
 
-                    @Override
-                    public void failure(TwitterException exception) {
-                        // Toast or some other action
-                    }
-                });
+                swipeLayout.setRefreshing(false);
             }
-        });*/
+        });
 
-        /*Timer T = new Timer();
+        Timer T = new Timer();
         T.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -124,45 +114,22 @@ public class ProfileActivity extends ListActivity{
                     }
                 });
             }
-        }, 1000, 20000);*/
-
-        loadTweets();
+        }, 1000, 5000);
     }
 
     public void refreshNotification(){
-        setTweetCount();
+        loadCounts();
 
-    }
+        if(tweetCountRefresh > tweetCount){
+            Context context = getApplicationContext();
+            CharSequence text = "New Tweets!!!!!";
+            int duration = Toast.LENGTH_SHORT;
 
-    public void setTweetCount(){
-        Twitter.getApiClient().getAccountService()
-                .verifyCredentials(true, false, new Callback<User>() {
-                    @Override
-                    public void failure(TwitterException e) {
-                        //If any error occurs handle it here
-                    }
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
 
-                    @Override
-                    public void success(Result<User> userResult) {
-                        //If it succeeds creating a User object from userResult.data
-                        User user = userResult.data;
-                        int tweetCountRefresh = user.statusesCount;
-
-                        if (tweetCountRefresh > tweetCount) {
-                            Context context = getApplicationContext();
-                            CharSequence text = "New Tweets!!!!!";
-                            int duration = Toast.LENGTH_SHORT;
-
-
-                            Toast toast = Toast.makeText(context, text, duration);
-                            toast.show();
-                            Constant.user = user;
-                            tweetCount = Constant.user.statusesCount;
-                        }
-                    }
-                });
-
-
+            tweetCount = tweetCountRefresh;
+        }
     }
 
     public void loadTweets() {
@@ -172,6 +139,8 @@ public class ProfileActivity extends ListActivity{
                     @Override
                     public void success(Result<List<Tweet>> result) {
                         adapter.setTweets(result.data);
+                        setListAdapter(adapter);
+                        tweetCount = result.data.size();
                     }
 
                     @Override
@@ -183,6 +152,23 @@ public class ProfileActivity extends ListActivity{
         );
     }
 
+    public void loadCounts(){
+        final StatusesService service = Twitter.getInstance().getApiClient().getStatusesService();
+
+        service.homeTimeline(null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
+
+                    @Override
+                    public void success(Result<List<Tweet>> result) {
+                        tweetCountRefresh = result.data.size();
+                    }
+
+                    @Override
+                    public void failure(TwitterException error) {
+
+                    }
+                }
+        );
+    }
 }
 
 
