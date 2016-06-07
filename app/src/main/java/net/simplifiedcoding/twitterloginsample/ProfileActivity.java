@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -80,8 +81,10 @@ public class ProfileActivity extends ListActivity{
         ShowTimeline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent TimelimeIntent = new Intent(ProfileActivity.this,TimelineActivity.class);
-                startActivity(TimelimeIntent);
+                Intent timelineIntent = new Intent(ProfileActivity.this,TimelineActivity.class);
+                timelineIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(timelineIntent);
             }
 
         });
